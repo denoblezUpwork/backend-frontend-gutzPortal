@@ -20,7 +20,7 @@ const protect = asyncHandler(async (req, res, next) => {
     }
 });
 
-const admin = (req, res, next) => {
+const isAdmin = (req, res, next) => {
     if (req.user && req.user.role === 'admin') {
         next();
     } else {
@@ -29,4 +29,4 @@ const admin = (req, res, next) => {
     }
 }
 
-export { protect, admin };
+export { protect, isAdmin };

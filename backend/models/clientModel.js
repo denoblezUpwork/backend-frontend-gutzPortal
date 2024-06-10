@@ -9,7 +9,7 @@ const clientSchema = mongoose.Schema ({
         type: String,
         required: true,
     }
-}, {timeStamps: true})
+}, {timestamps: true})
 
 const Client = mongoose.model('clientInformation', clientSchema)
 export default Client;
