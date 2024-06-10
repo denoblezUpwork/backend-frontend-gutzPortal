@@ -12,10 +12,12 @@ const Investments = props => {
         const fetchClients = async () => {
             try {
                 const response = await axios.get('/api/clients');
-                const clientsData = response.data.record;
+                let clientsData = response.data.record;
                 if (clientsData.length === 0) {
                     setError('No clients found.');
                 } else {
+                    // Sort clients data by createdAt in descending order
+                    clientsData = clientsData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                     setClients(clientsData);
                 }
             } catch (error) {
@@ -51,10 +53,11 @@ const Investments = props => {
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 350 }} aria-label="caption table">
                     <TableHead>
-                        <TableRow sx={{ backgroundColor: '#ff3d00' }}>
+                        <TableRow sx={{ backgroundColor: '#ff5722' }}>
                             <TableCell>Id</TableCell>
                             <TableCell>Full Name</TableCell>
                             <TableCell>Address</TableCell>
+                            <TableCell>CreatedAt</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -63,6 +66,7 @@ const Investments = props => {
                                 <TableCell component="th" scope="row">{record._id}</TableCell>
                                 <TableCell>{record.fullName}</TableCell>
                                 <TableCell>{record.address}</TableCell>
+                                <TableCell>{record.createdAt}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -76,7 +80,9 @@ const Investments = props => {
                 ))}
                 <Button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === pageNumbers.length}>Next</Button>
             </div>
+            <h5>test</h5>
         </div>
+        
     );
 };
 

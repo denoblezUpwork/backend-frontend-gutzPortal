@@ -10,7 +10,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
@@ -21,15 +20,19 @@ import PersonOutlineSharpIcon from '@mui/icons-material/PersonOutlineSharp';
 import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import Clientlist from '../components/Clientlist'
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
+import Clientlist from '../components/Clientlist';
+import AddClient from '../components/AddClient'
+import ViewContext from '../context/ViewContext';
 
 const drawerWidth = 240;
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#ff3d00',
-      hover:'#f5f5f5',
+      main: '#ff5722',
+      hover: '#f5f5f5',
     },
     secondary: {
       main: '#d50000',
@@ -66,7 +69,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'flex-end',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -86,8 +88,7 @@ const AppBar = styled(MuiAppBar, {
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
-
-  background: theme.palette.primary.main
+  background: theme.palette.primary.main,
 }));
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -110,7 +111,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 function Investments() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const [showClientList, setShowClientList] = useState(false);  // Add state to track Clientlist visibility
+  const [currentView, setCurrentView] = useState('Overview');  // State to track the current view
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -120,94 +121,105 @@ function Investments() {
     setOpen(false);
   };
 
-  const handleViewClientsClick = () => {
-    setShowClientList(true);  // Show Clientlist component
-  };
-
   return (
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Investments Dashboard
-          </Typography>
-        </Toolbar>
-      </AppBar>
+    <ViewContext.Provider value={{ currentView, setCurrentView }}>
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && { display: 'none' }),
+              }}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Investment Overview
+            </Typography>
+          </Toolbar>
+        </AppBar>
 
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          <ListItem>
-            <ListItemButton sx={{ '&:hover': { backgroundColor: theme.palette.primary.hover } }} onClick={handleViewClientsClick}>
-              <ListItemIcon>
-                <PersonOutlineSharpIcon />
-              </ListItemIcon>
-              <ListItemText primary='View Clients' />
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton sx={{ '&:hover': { backgroundColor: theme.palette.primary.hover } }}>
-              <ListItemIcon>
-                <PersonAddAltOutlinedIcon />
-              </ListItemIcon>
-              <ListItemText primary='Add Clients' />
-            </ListItemButton>
-          </ListItem>
-        </List>
-        <Divider />
-        <List>
-          <ListItem>
-            <ListItemButton sx={{ '&:hover': { backgroundColor: theme.palette.primary.hover } }}>
-              <ListItemIcon>
-                <BuildOutlinedIcon />
-              </ListItemIcon>
-              <ListItemText primary='Services' />
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton sx={{ '&:hover': { backgroundColor: theme.palette.primary.hover } }}>
-              <ListItemIcon>
-                <LogoutOutlinedIcon />
-              </ListItemIcon>
-              <ListItemText primary='Logout' />
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        {showClientList ? (
-          <Clientlist />
-        ) : (
-          <>
-            <Typography paragraph>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsam, qui?
-            </Typography>
-            <Typography paragraph>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Pariatur, enim?
-            </Typography>
-          </>
-        )}
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+          <List>
+            <ListItem>
+              <ListItemButton sx={{ '&:hover': { backgroundColor: theme.palette.primary.hover } }} onClick={() => setCurrentView('Overview')}>
+                <ListItemIcon>
+                  <DashboardOutlinedIcon />
+                </ListItemIcon>
+                <ListItemText primary='Overview' />
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton sx={{ '&:hover': { backgroundColor: theme.palette.primary.hover } }} onClick={() => setCurrentView('viewClients')}>
+                <ListItemIcon>
+                  <PersonOutlineSharpIcon />
+                </ListItemIcon>
+                <ListItemText primary='View Clients' />
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton sx={{ '&:hover': { backgroundColor: theme.palette.primary.hover } }} onClick={() => setCurrentView('addClient')}>
+                <ListItemIcon>
+                  <PersonAddAltOutlinedIcon />
+                </ListItemIcon>
+                <ListItemText primary='Add Clients' />
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton sx={{ '&:hover': { backgroundColor: theme.palette.primary.hover } }}>
+                <ListItemIcon>
+                  <ManageAccountsOutlinedIcon />
+                </ListItemIcon>
+                <ListItemText primary='Manage Clients' />
+              </ListItemButton>
+            </ListItem>
+          </List>
+          <Divider />
+          <List>
+            <ListItem>
+              <ListItemButton sx={{ '&:hover': { backgroundColor: theme.palette.primary.hover } }}>
+                <ListItemIcon>
+                  <BuildOutlinedIcon />
+                </ListItemIcon>
+                <ListItemText primary='Services' />
+              </ListItemButton>
+            </ListItem>
+            <ListItem>
+              <ListItemButton sx={{ '&:hover': { backgroundColor: theme.palette.primary.hover } }}>
+                <ListItemIcon>
+                  <LogoutOutlinedIcon />
+                </ListItemIcon>
+                <ListItemText primary='Logout' />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Drawer>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <DrawerHeader />
+          {currentView === 'dashboard' && (
+            <>
+              <Typography paragraph>
+                Dash board area here
+              </Typography>
+            </>
+          )}
+          {currentView === 'viewClients' && <Clientlist />}
+          {currentView === 'addClient' && <AddClient />}
+        </Box>
       </Box>
-    </Box>
+    </ViewContext.Provider>
   );
 }
 

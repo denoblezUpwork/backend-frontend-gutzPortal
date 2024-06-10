@@ -7,14 +7,18 @@ import User from '../models/UserModels.js '
 /*route: api/Users/auth*/
 /*Access by public */
 const authUser = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
     // Find the user by email
     const user = await User.findOne({ email });
     // Check if user exists and password matches
     if (user && (await user.matchPassword(password))) {
-        generateToken(res, user._id);
+        generateToken(res, user._id, rememberMe);
         res.status(200).json({
-            message: 'User authenticated successfully'
+            message: 'User authenticated successfully',
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
         });
     } else {
         res.status(401);
