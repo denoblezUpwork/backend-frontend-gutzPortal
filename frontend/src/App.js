@@ -1,11 +1,14 @@
+// src/App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import LoginForm from './pages/Login';
 import AdminPage from './pages/Admin';
 import UserPage from './pages/User';
+import LandingPage from './pages/LandingPage'; // Import the LandingPage component
 import { AuthContext } from './context/AuthContext';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import './index.css'
 
 function App() {
   const [user, setUser] = useState(null); // Initialize user state
@@ -58,16 +61,17 @@ function App() {
       <Router>
         <div>
           <Routes>
-            <Route path="/" element={<LoginForm />} />
+            <Route path="/" element={<LandingPage />} /> {/* Landing page route */}
+            <Route path="/login" element={<LoginForm />} />
             <Route
               path="/admin"
-              element={user && user.role === 'admin' ? <AdminPage /> : <Navigate to="/" />}
+              element={user && user.role === 'admin' ? <AdminPage /> : <Navigate to="/login" />}
             />
             <Route
               path="/user"
-              element={user && user.role === 'user' ? <UserPage /> : <Navigate to="/" />}
+              element={user && user.role === 'user' ? <UserPage /> : <Navigate to="/login" />}
             />
-            {/* Redirect to login page if no route matches */}
+            {/* Redirect to landing page if no route matches */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </div>
